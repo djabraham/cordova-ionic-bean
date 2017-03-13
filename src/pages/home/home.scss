@@ -1,0 +1,38 @@
+
+
+// holy snap: http://stackoverflow.com/a/13831378/1759357
+a[disabled], button[disabled], [ion-button][disabled] {
+
+  // http://png-pixel.com/ -> rgba(0,0,0,0.25)
+  // covering with a semi-transparent pixel to fade the current background of a button, whatever it may be..
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNksAcAAEUAQRtOwGEAAAAASUVORK5CYII=);
+  background-repeat: cover;
+}
+
+.icon-frame {
+  width: 35px;
+  margin-left: 5px;
+  text-align: left;
+}
+
+.spinner-md-dots circle {
+  fill: #fff;
+}
+
+.bean-label {
+  width: 80px;
+  text-align: right;
+  display: inline-block;
+  color: #448;
+  padding-right: 5px;
+}
+
+.bean-selected-name {
+  font-size: large;
+  font-weight: bold;
+  text-align: center;
+}
+
+.bean-selected-addr {
+  text-align: center;
+}

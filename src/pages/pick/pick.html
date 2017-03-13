@@ -1,0 +1,16 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title>Select a Nearby Bean</ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content>
+  <ion-list>
+  <button ion-item *ngFor="let bean of beanSearch.beansFound" (click)="beanSelected(bean)">
+    <div class="bean-list-name">{{ bean.name }}</div>
+    <div>{{ bean.address }}</div>
+  </button>
+  </ion-list>
+</ion-content>
+
+

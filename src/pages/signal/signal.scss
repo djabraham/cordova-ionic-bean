@@ -1,0 +1,23 @@
+
+.button-row {
+  display:flex;
+  padding: 10px;
+  justify-content: center;
+}
+
+.button-row button {
+  width: 60px;
+}
+
+.pad-row {
+  position: relative;
+}
+
+.status {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  bottom: 5px;
+  left: 5px;
+}
