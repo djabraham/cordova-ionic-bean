@@ -1,11 +1,22 @@
 
-<div class="stick">
+<div class="stick" [ngClass]="{ 'colored': limit.isColored }">
   <div class="limit">
     <div class="horz"></div>
     <div class="vert"></div>
     <div class="knob"></div>
-    <div class="coords xlabel">{{ label.sign.y }}{{ label.digs.y }}</div>
-    <div class="coords ylabel">{{ label.sign.x }}{{ label.digs.x }}</div>
+    <div class="coords xlabel">{{ label.sign.y }}{{ label.posa.y }}</div>
+    <div class="coords ylabel">{{ label.sign.x }}{{ label.posa.x }}</div>
+    <div class="coords r">{{ label.r }}</div>
+    <div class="coords g">{{ label.g }}</div>
+    <div class="coords b">{{ label.b }}</div>
   </div>
+</div>
+<div class="output">
+  <div class="label" *ngIf="!limit.isColored">
+    [ {{ label.sign.x }}{{ label.posa.x }},
+    {{ label.sign.y }}{{ label.posa.y }} ]
+  </div>
+  <div class="label" *ngIf="limit.isColored">#{{ label.color.hex }}</div>
+  <div class="sample" [ngStyle]="{ 'background-color': '#' + label.color.hex }" *ngIf="limit.isColored"></div>
 </div>
 

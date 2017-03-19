@@ -22,22 +22,14 @@ export interface IBeanSignalEnum {
 }
 
 @Component({
-  selector: 'page-signal',
-  templateUrl: 'signal.html'
+  selector: 'control-dash',
+  templateUrl: 'dash.html'
 })
-export class SignalPage {
+export class ControlDash {
   // assigns the interface of any type to the enum
   beanSignal: IBeanSignalEnum = BeanSignalEnum;
 
-  stick = {
-    square: true,
-    snappy: true,
-    position: {
-      x: 0,
-      y: 0
-    },
-    alerted: false
-  }
+  alerted: boolean = false;
 
   constructor(
     private cd: ChangeDetectorRef,
@@ -46,37 +38,21 @@ export class SignalPage {
   }
 
   // signal is one of BeanSignal (above)
-  sendSignal(signal: string) {
+  sendSignal(signal: IBeanSignalEnum) {
     var self = this;
-    return self.beanListener.sendSerialData(signal)
+    return self.beanListener.sendSerialData(<any>signal)
     .then(function(msg) {
       // console.log(msg);
-      self.stick.alerted = false;
     })
     .catch(function(e){
-      if (!self.stick.alerted) {
-        self.stick.alerted = true;
-
-        Observable.timer(500).subscribe(t=> {
+      if (!self.alerted) {
+        self.alerted = true;
+        Observable.timer(100).subscribe(t=> {
           alert((e && e.message) || 'Error: Check connection');
           self.navCtrl.pop();
         });
       }
     });
   }
-
-  setPosition(pos) {
-    var self = this;
-
-    if (pos) {
-      this.stick.position.x = Math.round(pos.x);
-      this.stick.position.y = Math.round(pos.y);
-      this.cd.detectChanges();
-
-      if (!self.stick.alerted) {
-        this.sendSignal('P/' + this.stick.position.x + '/' + this.stick.position.y);
-      }
-    }
-  };
 }
 

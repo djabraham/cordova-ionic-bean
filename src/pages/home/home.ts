@@ -4,7 +4,10 @@ import { Component, ChangeDetectorRef } from '@angular/core';
 import { NavController, Events, Loading, LoadingController } from 'ionic-angular';
 
 import { PickPage } from '../pick/pick';
-import { SignalPage } from '../signal/signal';
+import { ControlSettings } from '../control-settings/settings';
+import { ControlStick } from '../control-stick/stick';
+import { ControlColor } from '../control-color/color';
+import { ControlDash } from '../control-dash/dash';
 
 import { BeanSearch, IBeanArrayItem } from '../../services/bean.search';
 import { BeanListener, BeanListenerEvent } from '../../services/bean.listener';
@@ -17,9 +20,8 @@ export class HomePage {
   isSearching = false;
 
   loader: Loading = undefined;
-  modalSpinner;
 
-  //https://manuel-rauber.com/2016/01/05/angular-2-spinner-component/
+  // https://manuel-rauber.com/2016/01/05/angular-2-spinner-component/
 
   constructor(
     private cd: ChangeDetectorRef,
@@ -89,7 +91,23 @@ export class HomePage {
     this.beanListener.disconnect();
   }
 
-  bealController(event: Event) {
-    this.navCtrl.push(SignalPage);
+  openPage(page) {
+    switch (page) {
+      case 'settings':
+        this.navCtrl.push(ControlSettings);
+        break;
+      case 'dash':
+        this.navCtrl.push(ControlDash);
+        break;
+      case 'color':
+        this.navCtrl.push(ControlColor);
+        break;
+      case 'stick':
+        this.navCtrl.push(ControlStick);
+        break;
+      default:
+        console.log("Can't find page: " + page);
+        break;
+    }
   }
 }

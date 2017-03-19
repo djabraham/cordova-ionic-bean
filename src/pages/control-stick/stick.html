@@ -1,0 +1,36 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title>Joystick</ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content>
+  <div class="button-row">
+    <button ion-button (click)="sendSignal('B/A')">A</button>
+    <button ion-button (click)="sendSignal('B/B')">B</button>
+  </div>
+
+  <div class="pad-row">
+    <control-pad id="controlPad" (onChange)="setPosition($event)"
+        rateThrottle="{{ beanSettings.throttle }}"
+        shapeSquare="{{ stick.square }}"
+        snapBack="{{ stick.snappy }}"
+        shapeColored="false"
+        sizeLimit="200"
+        sizeKnob="80" ></control-pad>
+  </div>
+
+  <hr />
+  <ion-list>
+    <ion-item>
+      <ion-label>Square</ion-label>
+      <ion-toggle [(ngModel)]="stick.square"></ion-toggle>
+    </ion-item>
+    <ion-item>
+      <ion-label>Snappy</ion-label>
+      <ion-toggle [(ngModel)]="stick.snappy"></ion-toggle>
+    </ion-item>
+  </ion-list>
+
+</ion-content>
+

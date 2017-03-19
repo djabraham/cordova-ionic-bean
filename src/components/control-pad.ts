@@ -5,6 +5,7 @@ import { DomController } from 'ionic-angular';
 import { Observable, Subject } from 'rxjs/Rx';
 
 import * as Utils from './utils';
+import * as Colors from './colors';
 
 interface IBoundingClientRect {
   top: number;
@@ -15,6 +16,18 @@ interface IBoundingClientRect {
   width: number;
 }
 
+interface IColorRGB {
+  r: string;
+  g: string;
+  b: string;
+}
+
+interface IChangeValue {
+  pos: Utils.I2dPoint;
+  rgb: IColorRGB,
+  hex: string
+}
+
 @Component({
   selector: 'control-pad',
   templateUrl: 'control-pad.html'
@@ -22,30 +35,34 @@ interface IBoundingClientRect {
 export class ControlPad implements OnChanges {
 
   // http://stackoverflow.com/a/39960980/1759357
-  @Output("onPosition") onPosition: EventEmitter<Utils.I2dPoint> = new EventEmitter<Utils.I2dPoint>();
+  @Output("onChange") onChange: EventEmitter<IChangeValue> = new EventEmitter<IChangeValue>();
 
   // in ngAfterViewInit() a subscriber is setup to debounce change events
-  positionChanged: Subject<Utils.I2dPoint> = new Subject<Utils.I2dPoint>();
+  posChanged: Subject<IChangeValue> = new Subject<IChangeValue>();
 
   /** fired by control to update callback in implementors */
   // @Input() change: (coord: Utils.I2Cartesian, polar: Utils.I2dPolar) => void;
 
-  @Input('shapeSquare') ShapeSquare;
   @Input('snapBack') SnapBack;
+  @Input('shapeSquare') ShapeSquare;
+  @Input('shapeColored') ShapeColored;
   @Input('sizeKnob') SizeKnob;
   @Input('sizeLimit') SizeLimit;
-  @Input('changeMax') ChangeMax;
+  @Input('rateThrottle') RateThrottle;
 
   // TODO: expose position through input
   //       listen for changes in ngOnChanges()
   //       update using queueChangePosition() so those bound to position are informed
 
   // needed getters for inputs, that were typed as strings at times
+  get snapBack(): boolean {
+    return Utils.coerceBoolValue(this.SnapBack, true);
+  }
   get shapeSquare(): boolean {
     return Utils.coerceBoolValue(this.ShapeSquare, false);
   }
-  get snapBack(): boolean {
-    return Utils.coerceBoolValue(this.SnapBack, true);
+  get shapeColored(): boolean {
+    return Utils.coerceBoolValue(this.ShapeColored, false);
   }
   get sizeKnob(): number {
     return Utils.coerceIntegerValue(this.SizeKnob, 48);
@@ -53,8 +70,8 @@ export class ControlPad implements OnChanges {
   get sizeLimit(): number {
     return Utils.coerceIntegerValue(this.SizeLimit, 240);
   }
-  get changeMax(): number {
-    return Utils.coerceIntegerValue(this.ChangeMax, 2);
+  get rateThrottle(): number {
+    return Utils.coerceIntegerValue(this.RateThrottle, 2);
   }
 
   // TODO: expose snapBackInterval and snapBackStepsMax?
@@ -77,7 +94,8 @@ export class ControlPad implements OnChanges {
 
   limit = {
     size   : [0, 0],
-    center : [0, 0]
+    center : [0, 0],
+    isColored: true
   };
 
   knob = {
@@ -91,8 +109,14 @@ export class ControlPad implements OnChanges {
   };
 
   label = {
-    digs: { x: '000', y: '000' },
-    sign: { x: '+', y: '-' }
+    posa: { x: '000', y: '000' },   // absolute value string, for screen purposes
+    sign: { x: '+', y: '-' },
+    color: {
+      rgb: {
+        r: '000', g: '000', b: '000'
+      },
+      hex: '#000000'
+    }
   }
 
   constructor(public element: ElementRef, public renderer: Renderer, public domCtrl: DomController) { }
@@ -113,12 +137,12 @@ export class ControlPad implements OnChanges {
     timer.subscribe(t=> {
 
       // this debounces the changes, to allieviate back-pressure on implementors
-      this.positionChanged
-        .debounceTime(this.changeMax)   // wait after the last event before emitting last event
+      this.posChanged
+        .debounceTime(this.rateThrottle)   // wait after the last event before emitting last event
         .distinctUntilChanged()         // only emit if value is different from previous value
         .subscribe(point => {
           // console.log('debounced: ', point);
-          self.onPosition.emit( point );
+          self.onChange.emit( point );
         });
 
       let hammer = new window['Hammer'](this.elKnob);
@@ -160,11 +184,80 @@ export class ControlPad implements OnChanges {
     this.knob.coord[0] = coord[0];
     this.knob.coord[1] = coord[1];
 
-    this.label.digs.x = Utils.getPoslabel(Math.abs(this.knob.coord[0]));
-    this.label.digs.y = Utils.getPoslabel(Math.abs(this.knob.coord[1]));
+    this.label.posa.x = Utils.padToThreeDecimal(Math.abs(this.knob.coord[0]));
+    this.label.posa.y = Utils.padToThreeDecimal(Math.abs(this.knob.coord[1]));
 
     this.label.sign.x = (this.knob.coord[0] < 0) ? '-' : '+';
     this.label.sign.y = (this.knob.coord[1] < 0) ? '-' : '+';
+
+    var bfactor = Math.round(255 * (this.knob.coord[1] / this.limit.center[1]));
+    // var bfactor = Math.round(255 - (yfactor * 255));
+
+    var xfactor = this.knob.offset[0] / this.limit.size[0];
+    var xcolor = Math.floor(xfactor * 254);
+
+    var cr = 0;
+    var cg = 0;
+    var cb = 0;
+
+    // ff00ff  ff0000  ffff00  00ff00  00ffff  0000ff  ff00ff
+    //    |   0   |   1   |   2   |   3   |   4   |   5   |
+    //
+
+    var zone = Math.floor(xcolor / 42.5);
+    zone = (zone > 5) ? 5 : zone;
+
+    var zoneRL = (42.5 - (xcolor % 42.5)) / 42.5;
+    var zoneLR = (xcolor % 42.5) / 42.5;
+
+    if (zone === 0) {
+      cb = Math.round(255 * zoneRL);
+      cr = Math.round(255);
+    }
+    if (zone === 1) {
+      cr = Math.round(255);
+      cg = Math.round(255 * zoneLR);
+    }
+    if (zone === 2) {
+      cr = Math.round(255 * zoneRL);
+      cg = Math.round(255);
+    }
+    if (zone === 3) {
+      cg = Math.round(255);
+      cb = Math.round(255 * zoneLR);
+    }
+    if (zone === 4) {
+      cg = Math.round(255 * zoneRL);
+      cb = Math.round(255);
+    }
+    if (zone === 5) {
+      cb = Math.round(255);
+      cr = Math.round(255 * zoneLR);
+    }
+
+    console.log({
+      bfactor: bfactor,
+      xfactor: xfactor,
+      xcolor: xcolor,
+      // zone: zone,
+      // zoneLR: zoneLR,
+      // zoneRL: zoneRL
+    });
+
+    var fr = Math.max(Math.min(cr + bfactor, 255), 0);
+    var fg = Math.max(Math.min(cg + bfactor, 255), 0);
+    var fb = Math.max(Math.min(cb + bfactor, 255), 0);
+
+    this.label.color.rgb.r = Utils.padToThreeDecimal(fr);
+    this.label.color.rgb.g = Utils.padToThreeDecimal(fg);
+    this.label.color.rgb.b = Utils.padToThreeDecimal(fb);
+
+    this.label.color.hex = Colors.hex2str6(Colors.rgb2hex([fr, fg, fb]));
+
+    console.log('R:' + cr + ' G:' + cg + ' B:' + cb );
+    console.log('R:' + fr + ' G:' + fg + ' B:' + fb );
+    console.log(this.label.color.hex);
+
   }
 
   knobRender() {
@@ -174,7 +267,11 @@ export class ControlPad implements OnChanges {
     });
 
     var position = this.knob.coord; // Utils.roundArray(this.knob.coord);
-    this.positionChanged.next({ x: position[0], y: position[1] });
+    this.posChanged.next({
+      pos: { x: position[0], y: position[1] },
+      rgb: this.label.color.rgb,
+      hex: this.label.color.hex
+    });
   }
 
   controlReset() {
@@ -184,6 +281,8 @@ export class ControlPad implements OnChanges {
     this.elKnob = this.elOuter.querySelector('.knob');
     this.elLabelX = this.elOuter.querySelector('.xlabel');
     this.elLabelY = this.elOuter.querySelector('.ylabel');
+
+    this.limit.isColored = this.shapeColored;
 
     // limit's dimensions
     this.limit.size[0] = this.sizeLimit;
@@ -236,7 +335,7 @@ export class ControlPad implements OnChanges {
     //   snapBack: this.snapBack,
     //   sizeKnob: this.sizeKnob,
     //   sizeLimit: this.snapBack,
-    //   changeMax: this.changeMax
+    //   rateThrottle: this.rateThrottle
     // });
   }
 
@@ -277,6 +376,7 @@ export class ControlPad implements OnChanges {
       self.knob.offset[1]
     ];
 
+    // timer returns the knob to center
     Observable.interval(this.snapBackInterval)
       .take(snapBackStepsTake)
       .map((x) => x)

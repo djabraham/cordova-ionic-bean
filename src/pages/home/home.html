@@ -1,6 +1,6 @@
 <ion-header>
   <ion-navbar>
-    <ion-title>Bean Search & Connect</ion-title>
+    <ion-title>Bean Explorer</ion-title>
   </ion-navbar>
 </ion-header>
 
@@ -14,13 +14,11 @@
   </button>
 
   <br />
-  <br />
   <div *ngIf="beanSearch.beanSelected.address">
     <div class="bean-selected-name">{{ beanSearch.beanSelected.name || 'Unknown Bean' }}</div>
     <div class="bean-selected-addr">{{ beanSearch.beanSelected.address }}</div>
 
-    <button ion-button block icon-right (click)="beanConnect(beanSearch.beanSelected)"
-        *ngIf="!beanListener.isListening" [disabled]="isSearching || beanListener.isConnecting">
+    <button ion-button block icon-right (click)="beanConnect(beanSearch.beanSelected)" *ngIf="!beanListener.isListening" [disabled]="isSearching || beanListener.isConnecting">
       <div class="icon-frame"></div>
       Connect
       <div class="icon-frame">
@@ -33,28 +31,21 @@
     </button>
 
     <br />
-    <button ion-button block icon-right color="secondary" (click)="bealController()" [disabled]="isSearching || !beanListener.isListening">
-      Bean Controller <ion-icon name="arrow-forward"></ion-icon>
-    </button>
-
-    <div *ngIf="beanListener.isListening">
-      <br />
-      <div><span class="bean-label">Address:</span> {{ beanListener.address }}</div>
-      <div><span class="bean-label">Hardware:</span> {{ beanListener.hardwareVersion }}</div>
-      <div><span class="bean-label">Firmware:</span> {{ beanListener.firmwareVersion }}</div>
-      <div><span class="bean-label">Software:</span> {{ beanListener.sofwareVersion }}</div>
-      <br />
-      <div><span class="bean-label">Msg Type:</span> {{ beanListener.lastMessageType }}</div>
-      <div><span class="bean-label">Msg Serial:</span> {{ beanListener.serialMessage }}</div>
-      <div><span class="bean-label">Msg Rssi:</span> {{ beanListener.rssi }}</div>
-      <div><span class="bean-label">Err Code:</span> {{ beanListener.errorCode }}</div>
-      <div *ngFor="let scratchValue of beanListener.scratchBank; let i = index">
-        <div><span ng-if="i > 0" class="bean-label">Scr Bank[{{ i }}]</span> {{ scratchValue }}</div>
-      </div>
-    </div>
+    <ion-list>
+      <button ion-item block icon-right (click)="openPage('settings')" [disabled]="isSearching || !beanListener.isListening">
+        Settings
+      </button>
+      <button ion-item block icon-right (click)="openPage('dash')" [disabled]="isSearching || !beanListener.isListening">
+        Dashboard
+      </button>
+      <button ion-item block icon-right (click)="openPage('color')" [disabled]="isSearching || !beanListener.isListening">
+        Colors
+      </button>
+      <button ion-item block icon-right (click)="openPage('stick')" [disabled]="isSearching || !beanListener.isListening">
+        Joystick
+      </button>
+    </ion-list>
   </div>
-
 </ion-content>
 
 <!--<modal-working [isRunning]="isSearching"></modal-working>-->
-

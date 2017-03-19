@@ -1,0 +1,18 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title>Colors</ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content>
+  <div class="pad-row">
+    <control-pad id="controlPad" (onChange)="setColor($event)"
+        rateThrottle="{{ beanSettings.throttle }}"
+        shapeSquare="true"
+        shapeColored="true"
+        snapBack="false"
+        sizeLimit="200"
+        sizeKnob="80" ></control-pad>
+  </div>
+</ion-content>
+

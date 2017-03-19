@@ -180,3 +180,7 @@ package can be distributed to others and installed on Android, provided their de
 [https://github.com/don/cordova-plugin-ble-central/blob/master/src/android/BLECentralPlugin.java](https://github.com/don/cordova-plugin-ble-central/blob/master/src/android/BLECentralPlugin.java)
 
 [http://blog.instabug.com/2015/09/using-native-libraries-in-phonegap-a-diy-guide/](http://blog.instabug.com/2015/09/using-native-libraries-in-phonegap-a-diy-guide/)
+
+[Cool project / deep dive https://www.codeproject.com/Articles/833916/LightBlueBeans](https://www.codeproject.com/Articles/833916/LightBlueBeans)
+
+[http://beantalk.punchthrough.com/t/serial-interactivity-example/176/9](http://beantalk.punchthrough.com/t/serial-interactivity-example/176/9)

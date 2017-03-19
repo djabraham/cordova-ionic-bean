@@ -1,22 +1,44 @@
+
 control-pad {
+  flex: 0 0 auto;
   display: flex;
   position: relative;
   overflow: visible;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: -15px;
+}
+
+.output {
+  display: flex;
+  position: relative;
+  bottom: 15px;
+
+  .label {
+    flex: 0 0 auto;
+    margin-right: 10px;
+    font-size: large;
+    font-family: Courier New, Courier, monospace;
+  }
+
+  .sample {
+    flex: 0 0 auto;
+    width: 30px;
+    height: 20px;
+    border: 1px solid rgba(0,0,0,0.25);
+  }
 }
 
 .stick {
-  display: flex;
   height: 140x;
   width: 140x;
   margin-left: auto;
   margin-right: auto;
   margin-bottom: 30px;
-  // border: 1px solid #ddd;
   border-radius: 50%;
   position: relative;
   box-sizing: content-box;
-  box-shadow: -0px -0px 25px 2px rgba(0,0,0,0.2) inset;
-  position: relative;
+  box-shadow: 0px 0px 30px 10px rgba(0,0,0,0.2) inset;
   justify-content: center;
   text-align: center;
 
@@ -26,31 +48,42 @@ control-pad {
   .limit {
     position: relative;
     box-sizing: content-box;
-    border: 1.25px dashed #ccc;
-    border-radius: 50%;
     min-height: 100px;
     min-width: 100px;
     margin: 20px;
-    // left: 20px;
-    // top: 20px;
-    }
+    border-radius: 50%;
+    background-color: rgba(255,255,255,1);
+    box-shadow: 0px 0px 0px 1.25px rgba(0,0,0,0.2) inset;
+  }
+
+  &.colored .limit {
+    background: linear-gradient(to bottom, rgba(255,255,255,1),rgba(255,255,255,0),rgba(255,255,255,0)), linear-gradient(to top, rgba(0,0,0,1),rgba(0,0,0,0),rgba(0,0,0,0)), linear-gradient(to right, #ff00ff, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff);
+  }
 
   .knob {
-    position: absolute;
-    background-color: rgba(255, 255, 255, 1);
-    box-shadow: -2px -4px 15px 10px rgba(255,0,0,0.75) inset, 2px 4px 8px 2px rgba(0,0,0,0.15);
-    // border: 1px solid rgba(255,0,0,0.9);
     // box-sizing: content-box;
+    position: absolute;
     border-radius: 50%;
     height: 50px;
     width: 50px;
     left: 120px;
     top: 120px;
-    }
+
+    // border: 1px solid rgba(0,0,0,0.25);
+    background-color: rgba(255, 255, 255, 1);
+    box-shadow: 0px 0px 0px 1.25px rgba(0,0,0,0.1) inset, -4px -6px 15px 8px rgba(196,196,196,0.75) inset, 2px 4px 8px 2px rgba(0,0,0,0.1);
+  }
+
+  &.colored .knob {
+    background-color: rgba(0,0,0,0.0);
+    box-shadow: 0px 0px 0px 1.25px rgba(0,0,0,0.1) inset, 0px 0px 25px 10px rgba(0,0,0,0.15) inset, -0px -0px 0px 25px rgba(255,255,255,1) inset;
+    // box-shadow: 0px 0px 5px 3px rgba(0,0,0,0.15) inset, -0px -0px 0px 25px rgba(255,255,255,0.90) inset;
+  }
 
   .horz {
+    background: none;
     box-sizing: border-box;
-    border: 1px dashed #ddd;
+    border: 1px dashed #ccc;
     height: 0px;
     width: 100%;
     position: absolute;
@@ -59,13 +92,19 @@ control-pad {
   }
 
   .vert {
+    background: none;
     box-sizing: border-box;
-    border: 1px dashed #ddd;
+    border: 1px dashed #ccc;
     height: 100%;
     width: 0px;
     position: absolute;
     left: 0px;
     top: 0px;
+  }
+
+  &.colored .horz,
+  &.colored .vert {
+    border: none;
   }
 
   .coords {
@@ -84,3 +123,16 @@ control-pad {
   }
 }
 
+
+  // .eye {
+  //   pointer-events: none;
+  //   width: 35%;
+  //   height: 35%;
+  //   margin: 33%;
+  //   border-radius: 50%;
+  //   border: none;
+  // }
+
+  // &.colored .eye {
+  //   border: 1px solid rgba(0,0,0,0.5);
+  // }

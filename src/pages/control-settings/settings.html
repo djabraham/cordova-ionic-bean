@@ -1,0 +1,33 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title>Settings</ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content>
+  <ion-list>
+    <ion-item >
+      <ion-label class="label-short">Message Rate {{ beanSettings.throttle }}ms</ion-label>
+      <ion-range [(ngModel)]="beanSettings.throttle" min="0" max="250">
+        <ion-icon range-left xx-large name="flash"></ion-icon>
+        <ion-icon range-right xx-large name="hand"></ion-icon>
+      </ion-range>
+    </ion-item>
+  </ion-list>
+
+  <div *ngIf="beanListener.isListening">
+    <br />
+    <div><span class="bean-label">Hardware:</span> {{ beanListener.hardwareVersion }}</div>
+    <div><span class="bean-label">Firmware:</span> {{ beanListener.firmwareVersion }}</div>
+    <div><span class="bean-label">Software:</span> {{ beanListener.sofwareVersion }}</div>
+    <br />
+    <div><span class="bean-label">Msg Type:</span> {{ beanListener.lastMessageType }}</div>
+    <div><span class="bean-label">Msg Serial:</span> {{ beanListener.serialMessage }}</div>
+    <div><span class="bean-label">Msg Rssi:</span> {{ beanListener.rssi }}</div>
+    <div><span class="bean-label">Err Code:</span> {{ beanListener.errorCode }}</div>
+    <div *ngFor="let scratchValue of beanListener.scratchBank; let i = index">
+      <div><span ng-if="i > 0" class="bean-label">Scr Bank[{{ i }}]</span> {{ scratchValue }}</div>
+    </div>
+  </div>
+</ion-content>
+

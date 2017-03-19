@@ -16,6 +16,7 @@ export enum BeanListenerEventEnum {
   NotConnected            = <any> "notConnected",
   StillConnecting         = <any> "stillConnecting",
 
+  Connecting              = <any> "connecting",
   ConnectChangeProbable   = <any> "connectChangeProbable",
   ConnectError            = <any> "connectError",
   DisconnectError         = <any> "disconnectError",
@@ -43,6 +44,7 @@ export interface IBeanListenerEventEnum {
   NotConnected;
   StillConnecting;
 
+  Connecting;
   ConnectChangeProbable;
   ConnectError;
   DisconnectError;
@@ -180,6 +182,7 @@ export class BeanListener {
       self.mockMsg = 0;
       self.isConnecting = true;
       self.connectingTo = addr;
+      self.events.publish(BeanListenerEvent.Connecting);
       self.events.publish(BeanListenerEvent.ConnectChangeProbable);
 
       let timer = Observable.timer(250);
@@ -204,13 +207,16 @@ export class BeanListener {
 
     } else {
 
+      self.isConnecting = true;
       self.connectingTo = addr;
+      self.events.publish(BeanListenerEvent.Connecting);
 
       Cordova.exec(
         self.getCallback(),
         function(e) {
           self.connectingTo = undefined;
           self.isConnecting = false;
+          self.isListening = false;
           console.log(BeanListenerEvent.ConnectError, e);
           self.events.publish(BeanListenerEvent.ConnectError, e);
           self.events.publish(BeanListenerEvent.ConnectChangeProbable);
@@ -237,25 +243,25 @@ export class BeanListener {
       self.events.publish(BeanListenerEvent.NotListening, err);
     }
 
+    self.connectingTo = undefined;
+    self.isConnecting = false;
+
     if (!PluginBean) {
       // mocking
       Observable.timer(1000).subscribe(t=> {
         self.isListening = false;
-        self.connectingTo = undefined;
-        self.isConnecting = false;
+        self.events.publish(BeanListenerEvent.DisconnectSuccess);
+        self.events.publish(BeanListenerEvent.ConnectChangeProbable);
       });
     } else {
       Cordova.exec(
         function() {
           self.isListening = false;
-          self.connectingTo = undefined;
-          self.isConnecting = false;
           self.events.publish(BeanListenerEvent.DisconnectSuccess);
           self.events.publish(BeanListenerEvent.ConnectChangeProbable);
         },
         function(e) {
-          self.connectingTo = undefined;
-          self.isConnecting = false;
+          self.isListening = false;
           console.log(BeanListenerEvent.DisconnectError, e);
           self.events.publish(BeanListenerEvent.DisconnectError, e);
           self.events.publish(BeanListenerEvent.ConnectChangeProbable);
@@ -282,7 +288,7 @@ export class BeanListener {
 
       if (!PluginBean) {
         self.mockMsg++;
-        if (self.mockMsg < 20) {
+        if (self.mockMsg > -1) {
           self.events.publish(BeanListenerEvent.SerialSuccess);
           return resolve(msg);
         } else {
@@ -304,6 +310,7 @@ export class BeanListener {
             return resolve(msg);
           },
           function(e) {
+            self.isListening = false;
             console.log(BeanListenerEvent.SerialError, e);
             self.events.publish(BeanListenerEvent.SerialError, e);
             return reject(new Error((e && e.message) || BeanListenerEvent.SerialError));
@@ -330,6 +337,8 @@ export class BeanListener {
           case MsgType.Connected:
             let connMsg = <IMsgConnected>msg;
             self.address = self.connectingTo;
+            self.isListening = true;
+            self.isConnecting = false;
 
             self.hardwareVersion = connMsg.hardwareVersion;
             self.firmwareVersion = connMsg.firmwareVersion;
@@ -340,6 +349,9 @@ export class BeanListener {
             self.events.publish(BeanListenerEvent.ConnectChangeProbable);
             break;
           case MsgType.ConnectionFailed:
+            self.isListening = false;
+            self.isConnecting = false;
+            self.connectingTo = undefined;
             console.log(BeanListenerEvent.MessageConnectFailed);
             self.events.publish(BeanListenerEvent.MessageConnectFailed, msg);
             self.events.publish(BeanListenerEvent.ConnectChangeProbable);
@@ -364,6 +376,8 @@ export class BeanListener {
             break;
           case MsgType.Disconnected:
             self.isListening = false;
+            self.isConnecting = false;
+            self.connectingTo = undefined;
             console.log(BeanListenerEvent.MessageDisconnected);
             self.events.publish(BeanListenerEvent.MessageDisconnected);
             self.events.publish(BeanListenerEvent.ConnectChangeProbable);
@@ -380,11 +394,6 @@ export class BeanListener {
             self.events.publish(BeanListenerEvent.MessageUnknown, msg);
             break;
         }
-
-        self.isConnecting = false;
-        self.isListening = true;
-        self.connectingTo = undefined;
-
       }
 
       // generic catch all, called after property values are updated

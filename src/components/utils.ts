@@ -49,11 +49,19 @@ export function coerceIntegerValue(str, def) : number {
   }
 }
 
-export function getPoslabel(number): string {
-  if (number <= 999) {
-    return ('000' + Math.round(number)).slice(-3);
+export function padToThreeDecimal(n): string {
+  if (n <= 999) {
+    return ('0000' + Math.round(n)).slice(-3);
   } else {
-    return ('' + Math.round(number));
+    return ('' + Math.round(n));
+  }
+}
+
+export function padToTwoHex(n): string {
+  if (n <= 0xFF) {
+    return ('0000' + Math.round(n).toString(16)).slice(-2);
+  } else {
+    return ('' + Math.round(n).toString(16));
   }
 }
 
@@ -154,14 +162,32 @@ export function polarToMaxSquare (polar: I2dPolar, size: number, onto?: boolean)
 
 /** projects a cartesian coordinate into a circle of given size */
 export function coordToMaxCircle (coord: I2Cartesian, size: number) {
-  /** this type of projection should occur along the polar vector */
+  // this type of projection should occur along the polar vector
   return coordFromPolar(polarToMaxCircle(coordToPolar(coord), size));
 }
 
 /** projects a cartesian coordinate into a square of given size */
 export function coordToMaxSquare (coord: I2Cartesian, size: number) {
-  /** this type of projection should occur along the polar vector */
-  return coordFromPolar(polarToMaxSquare(coordToPolar(coord), size));
+  // made the corners hard to access
+  // return coordFromPolar(polarToMaxSquare(coordToPolar(coord), size));
+
+  var point = [ coord[0], coord[1] ];
+
+  if (point[0] < (-size)) {
+    point[0] = -size;
+  }
+  if (point[0] > (size)) {
+    point[0] = size;
+  }
+
+  if (point[1] < (-size)) {
+    point[1] = -size;
+  }
+  if (point[1] > (size)) {
+    point[1] = size;
+  }
+
+  return point;
 }
 
 export var rad45: number = 0.785398;  // 45 degrees in radians
