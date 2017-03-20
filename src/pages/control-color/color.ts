@@ -51,7 +51,7 @@ export class ControlColor {
       this.color.r = Math.round(pos.r);
       this.color.g = Math.round(pos.g);
       this.color.b = Math.round(pos.b);
-      // this.cd.detectChanges();
+      this.cd.detectChanges();
 
       if (!this.alerted) {
         this.sendSignal('C/' + this.color.r + '/' + this.color.g + '/' + this.color.b);
