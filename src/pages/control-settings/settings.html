@@ -4,11 +4,11 @@
   </ion-navbar>
 </ion-header>
 
-<ion-content>
+<ion-content padding>
   <ion-list>
     <ion-item >
       <ion-label class="label-short">Message Rate {{ beanSettings.throttle }}ms</ion-label>
-      <ion-range [(ngModel)]="beanSettings.throttle" min="0" max="250">
+      <ion-range [(ngModel)]="beanSettings.throttle" min="0" max="100">
         <ion-icon range-left xx-large name="flash"></ion-icon>
         <ion-icon range-right xx-large name="hand"></ion-icon>
       </ion-range>

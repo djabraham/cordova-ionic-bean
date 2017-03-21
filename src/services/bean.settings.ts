@@ -5,7 +5,7 @@ import { Events } from 'ionic-angular';
 
 @Injectable()
 export class BeanSettings {
-  private _throttle: number = 20;
+  private _throttle: number = 0;
 
   constructor(public events: Events) { }
 

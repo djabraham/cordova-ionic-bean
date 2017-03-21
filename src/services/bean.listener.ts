@@ -273,8 +273,13 @@ export class BeanListener {
     };
   }
 
-  sendSerialData(msg: string) {
+  sendSerialData(msg: string, noeol?: boolean) {
     var self = this;
+    var sending = msg;
+
+    if (!noeol) {
+      sending += '\n';
+    }
 
     // should really promisify everything else too
     return new Promise<string>(function(resolve, reject) {
@@ -290,7 +295,7 @@ export class BeanListener {
         self.mockMsg++;
         if (self.mockMsg > -1) {
           self.events.publish(BeanListenerEvent.SerialSuccess);
-          return resolve(msg);
+          return resolve(sending);
         } else {
           Observable.timer(250).subscribe(t=> {
             self.isListening = false;
@@ -307,7 +312,7 @@ export class BeanListener {
         Cordova.exec(
           function() {
             self.events.publish(BeanListenerEvent.SerialSuccess);
-            return resolve(msg);
+            return resolve(sending);
           },
           function(e) {
             self.isListening = false;
@@ -317,7 +322,7 @@ export class BeanListener {
           },
           'PTBeanPlugin',
           'serial',
-          [msg]
+          [sending]
         );
       };
     });

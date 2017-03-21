@@ -4,11 +4,11 @@
   </ion-navbar>
 </ion-header>
 
-<ion-content>
+<ion-content padding>
   <ion-list>
     <button ion-item *ngFor="let bean of beanSearch.beansFound" (click)="beanSelected(bean)">
-      <div class="bean-list-name">{{ bean.name }}</div>
-      <div>{{ bean.address }}</div>
+      {{ bean.name }}
+      <!--<div>{{ bean.address }}</div>-->
     </button>
   </ion-list>
 </ion-content>

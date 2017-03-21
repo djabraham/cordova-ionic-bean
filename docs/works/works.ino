@@ -11,6 +11,8 @@ String serialBuffer = "";
 int8_t posX = 0;
 int8_t posY = 0;
 
+char tempBuffer[64];
+
 void setup()
 {
   // Turn off the LED
@@ -27,7 +29,6 @@ void command() {
 }
 
 void bufferSerialInput() {
-  char tempBuffer[BUFFERLEN];
   size_t length = BUFFERLEN - 1;
 
   length = Serial.readBytes(tempBuffer, length);    // read chunk of pending data
@@ -38,8 +39,7 @@ void bufferSerialInput() {
   }
 }
 
-char* scanSerialInput() {
-  char tempBuffer[BUFFERLEN];
+void scanSerialInput() {
   tempBuffer[0] = 0;
 
   size_t lineEnd = serialBuffer.indexOf( "\n" );    // look for newline demarc char
@@ -53,8 +53,6 @@ char* scanSerialInput() {
     // strip command from serialBuffer
     serialBuffer = serialBuffer.substring(lineEnd + 1, serialBuffer.length() + 1);
   }
-
-  return tempBuffer;
 }
 
 void loop()
@@ -64,27 +62,13 @@ void loop()
   if(connected)
   {
     bufferSerialInput();
-    char* cmd = scanSerialInput();
+    scanSerialInput();
 
-    if ( !strncmp( cmd, "P/", 2 ) )
+    if ( !strncmp( tempBuffer, "C/", 2 ) )
     {
-      char *tok = cmd;
+      char *tok = tempBuffer;
       char *param = NULL;
-      param = strtok_r( tok, "/", &tok );             // first is the "P" command
-      int8_t posX = atoi( strtok_r( tok, "/", &tok ) );
-      int8_t posY = atoi( strtok_r( tok, "/", &tok ) );
-
-      int8_t posXScaled = abx(posX) / POS_MAX;
-
-      Bean.setLed(0, 128, 0);
-      Bean.setLed(0, 0, 0);
-    }
-
-    if ( !strncmp( cmd, "L/", 2 ) )
-    {
-      char *tok = cmd;
-      char *param = NULL;
-      param = strtok_r( tok, "/", &tok );             // first is the "L" command
+      param = strtok_r( tok, "/", &tok );             // first is the "C" command
       int8_t r = atoi( strtok_r( tok, "/", &tok ) );
       int8_t g = atoi( strtok_r( tok, "/", &tok ) );
       int8_t b = atoi( strtok_r( tok, "/", &tok ) );

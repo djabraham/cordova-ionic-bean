@@ -6,19 +6,27 @@ import { Observable } from 'rxjs/Rx';
 import { BeanListener } from '../../services/bean.listener';
 
 export enum BeanSignalEnum {
-  LockOpen         = <any> "S/LOCK/0",
-  LockShut         = <any> "S/LOCK/1",
-  LightOff         = <any> "S/LIGHT/0",
-  LightOn          = <any> "S/LIGHT/1"
+  Lock1Open        = <any> "S/LOCK/1/0",
+  Lock1Shut        = <any> "S/LOCK/1/1",
+  Lock2Open        = <any> "S/LOCK/2/0",
+  Lock2Shut        = <any> "S/LOCK/2/1",
+  Light1Off        = <any> "S/LIGHT/1/0",
+  Light1On         = <any> "S/LIGHT/1/1",
+  Light2Off        = <any> "S/LIGHT/2/0",
+  Light2On         = <any> "S/LIGHT/2/1"
 }
 
 // http://stackoverflow.com/a/33748659/1759357
 // enum are number type, this enables access of enum strings as type any
 export interface IBeanSignalEnum {
-  LockOpen;
-  LockShut;
-  LightOff;
-  LightOn;
+  Lock1Open;
+  Lock1Shut;
+  Lock2Open;
+  Lock2Shut;
+  Light1Off;
+  Light1On;
+  Light2Off;
+  Light2On;
 }
 
 @Component({

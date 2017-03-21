@@ -32,16 +32,20 @@
 
     <br />
     <ion-list>
-      <button ion-item block icon-right (click)="openPage('settings')" [disabled]="isSearching || !beanListener.isListening">
+      <button ion-item block (click)="openPage('settings')" [disabled]="isSearching || !beanListener.isListening">
+        <ion-icon name="settings" item-left></ion-icon>
         Settings
       </button>
-      <button ion-item block icon-right (click)="openPage('dash')" [disabled]="isSearching || !beanListener.isListening">
+      <button ion-item block (click)="openPage('dash')" [disabled]="isSearching || !beanListener.isListening">
+        <ion-icon name="speedometer" item-left></ion-icon>
         Dashboard
       </button>
-      <button ion-item block icon-right (click)="openPage('color')" [disabled]="isSearching || !beanListener.isListening">
+      <button ion-item block (click)="openPage('color')" [disabled]="isSearching || !beanListener.isListening">
+        <ion-icon name="color-palette" item-left></ion-icon>
         Colors
       </button>
-      <button ion-item block icon-right (click)="openPage('stick')" [disabled]="isSearching || !beanListener.isListening">
+      <button ion-item block (click)="openPage('stick')" [disabled]="isSearching || !beanListener.isListening">
+        <ion-icon name="game-controller-b" item-left></ion-icon>
         Joystick
       </button>
     </ion-list>

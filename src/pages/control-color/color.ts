@@ -6,6 +6,8 @@ import { Observable } from 'rxjs/Rx';
 import { BeanListener } from '../../services/bean.listener';
 import { BeanSettings } from '../../services/bean.settings';
 
+import * as Stick from '../../components/control-pad';
+
 @Component({
   selector: 'control-color',
   templateUrl: 'color.html'
@@ -13,9 +15,9 @@ import { BeanSettings } from '../../services/bean.settings';
 export class ControlColor {
 
   color = {
-    r: 0,
-    g: 0,
-    b: 0
+    r: '000',
+    g: '000',
+    b: '000'
   }
 
   alerted: boolean = false;
@@ -46,16 +48,21 @@ export class ControlColor {
     });
   }
 
-  setColor(pos) {
-    if (pos) {
-      this.color.r = Math.round(pos.r);
-      this.color.g = Math.round(pos.g);
-      this.color.b = Math.round(pos.b);
-      this.cd.detectChanges();
+  strPrev: string = '';
+
+  setColor(changeValue: Stick.IChangeValue) {
+    if (changeValue) {
+      this.color.r = changeValue.rgb.r;
+      this.color.g = changeValue.rgb.g;
+      this.color.b = changeValue.rgb.b;
 
       if (!this.alerted) {
-        this.sendSignal('C/' + this.color.r + '/' + this.color.g + '/' + this.color.b);
+        var str = 'C/' + changeValue.rgb.r + '/' + changeValue.rgb.g + '/' + changeValue.rgb.b;
+        this.strPrev = str;
+        this.sendSignal(str);
       }
+
+      this.cd.detectChanges();
     }
   };
 }

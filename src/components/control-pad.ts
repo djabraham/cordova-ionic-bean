@@ -16,13 +16,13 @@ interface IBoundingClientRect {
   width: number;
 }
 
-interface IColorRGB {
+export interface IColorRGB {
   r: string;
   g: string;
   b: string;
 }
 
-interface IChangeValue {
+export interface IChangeValue {
   pos: Utils.I2dPoint;
   rgb: IColorRGB,
   hex: string
@@ -129,7 +129,7 @@ export class ControlPad implements OnChanges {
 	}
 
   ngAfterViewInit() {
-    let timer = Observable.timer(500);
+    let timer = Observable.timer(250);
 
     var self = this;
 
@@ -138,8 +138,13 @@ export class ControlPad implements OnChanges {
 
       // this debounces the changes, to allieviate back-pressure on implementors
       this.posChanged
-        .debounceTime(this.rateThrottle)   // wait after the last event before emitting last event
-        .distinctUntilChanged()         // only emit if value is different from previous value
+        .distinctUntilChanged(function(p, n) {    // only emit if value is different from previous value
+          if (p.hex != n.hex) { return false; }
+          if (p.pos.x != n.pos.x) { return false; }
+          if (p.pos.y != n.pos.y) { return false; }
+          return true;
+        })
+        .debounceTime(this.rateThrottle)          // wait after the last event before emitting last event
         .subscribe(point => {
           // console.log('debounced: ', point);
           self.onChange.emit( point );
@@ -235,14 +240,14 @@ export class ControlPad implements OnChanges {
       cr = Math.round(255 * zoneLR);
     }
 
-    console.log({
-      bfactor: bfactor,
-      xfactor: xfactor,
-      xcolor: xcolor,
-      // zone: zone,
-      // zoneLR: zoneLR,
-      // zoneRL: zoneRL
-    });
+    // console.log({
+    //   bfactor: bfactor,
+    //   xfactor: xfactor,
+    //   xcolor: xcolor,
+    //   // zone: zone,
+    //   // zoneLR: zoneLR,
+    //   // zoneRL: zoneRL
+    // });
 
     var fr = Math.max(Math.min(cr + bfactor, 255), 0);
     var fg = Math.max(Math.min(cg + bfactor, 255), 0);
@@ -254,9 +259,9 @@ export class ControlPad implements OnChanges {
 
     this.label.color.hex = Colors.hex2str6(Colors.rgb2hex([fr, fg, fb]));
 
-    console.log('R:' + cr + ' G:' + cg + ' B:' + cb );
-    console.log('R:' + fr + ' G:' + fg + ' B:' + fb );
-    console.log(this.label.color.hex);
+    // console.log('R:' + cr + ' G:' + cg + ' B:' + cb );
+    // console.log('R:' + fr + ' G:' + fg + ' B:' + fb );
+    // console.log(this.label.color.hex);
 
   }
 
