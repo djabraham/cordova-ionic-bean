@@ -7,7 +7,7 @@ Uses Cordova / Ionic 2 / AngularJS 2 / PunchThrough Bean SDK for Android.
 
 ![Screen Shot][1] &nbsp; ![Screen Shot][2]
 
-  [1]: ./docs/images/scr-main.png
+  [1]: ./docs/images/scr-color.png
   [2]: ./docs/images/scr-capt.gif
 
 
