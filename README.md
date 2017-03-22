@@ -20,16 +20,16 @@ native applications. The Ionic framework is built on AngularJS and Cordova, and 
 build tools and UI components that are ideal for mobile applications.
 
 In this scenario, Javascript is used for presentation and requires native components to interact
-with device / platform specific features. For Android paltform, the native code is written in Java.
+with device / platform specific features. For Android platform, the native code is written in Java.
 The Bean developers have provided a Java based SDK that is called from a local plugin herein.
 
 ### Ionic -> AngularJS -> Cordova -> Android
 
 The folder structure is necessarly complicated to facilitate a multi-layered, multi-platform
-project and build system. The local bridge between Bean SDK and Javascript is in the following folder,
-which is adjacent to other plugins that are downloaded from their respective repositories.
+project and build system. The local bridge between Bean SDK and Javascript is in the plugins folder,
+and is adjacent to other plugins that are downloaded from their respective repositories.
 
-    /plugins/cordova-plugin-ptbean
+[https://github.com/djabraham/cordova-plugin-ngbean](https://github.com/djabraham/cordova-plugin-ngbean)
 
 ### Required
 - Java 1.8 / JDK 8
@@ -157,16 +157,18 @@ These steps are not necessary when editing the javascript/angularjs app.
 
     > ionic run android
 
-To debug custom plugins, you can use the adb logcat. These commands will flush the log, then dump the log to a file.
-The adb command can be found in the sdk\platform-tools folder of Android Studio. This tool is also used as a device
-server, as shown previously.
+You can debug custom plugins using adb logcat. The following commands will flush the log or dump the log to a file.
+The adb command can be found in the sdk\platform-tools folder of Android Studio. The adb tool is also used as a device
+connectivity server, as previously shown.
 
     > adb logcat -c
     > adb logcat -d -v long > ../adb7.log
 
-Search for PTBeanPlugin or PTBeanListener, which are tags used in the Java classes to create log entries.
+In the log dump file, you can search for PTBeanPlugin or PTBeanListener, which are tags used in the Java classes to
+create log entries. There are a great deal of unrelated log entries, so capturing may flushing the log, performing
+an action, then immediately dumping the log.
 
-To publish the app to the Play store, takes a great deal more effort. Although the debug
+Publishing this app to the Play store would require more effort than described herein. The debug
 package can be distributed to others and installed on Android, provided their device settings allow it.
 
 [https://ionicframework.com/docs/guide/publishing.html](https://ionicframework.com/docs/guide/publishing.html)
