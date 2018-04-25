@@ -1,6 +1,8 @@
 Cordova Ionic Bean
 ===
 
+#### NOTE: It looks like PunchThrough ported the LightBlue Bean Explorer to Android. If you're looking for an easy way to experiment with your Bean and learn more about it's capabilities, you may first want to [check it out](https://punchthrough.com/blog/posts/introducing-lightblue-explorer-for-android).
+
 ### Intro
 
 Uses Cordova / Ionic 2 / AngularJS 2 / PunchThrough Bean SDK for Android.
